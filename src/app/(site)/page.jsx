@@ -1,21 +1,23 @@
 import Link from "next/link";
 
-import { categories, products } from "../../data/mockData";
+import { categoriesResponse, productsResponse, } from "../../data/mockData";
 import LandingHeroSectionComponent from "../../components/landing/LandingHeroSectionComponent";
 import LandingBestSellerSectionComponent from "../../components/landing/LandingBestSellerSectionComponent";
 import LandingEssentialComponent from "../../components/landing/LandingEssentialComponent";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
 
-const bestSellers = products.slice(0, 4);
-const heroStrip = products.slice(0, 3);
+export default async function Home() {
+  const categories = await categoriesResponse();
 
-export default function Home() {
+  const products = await productsResponse();
+
+  const bestSellers = products?.payload.slice(0, 4);
+  const heroStrip = products?.payload.slice(0, 3);
+
   return (
     <div className="bg-[#fafafa]">
       <LandingHeroSectionComponent miniProducts={heroStrip} />
       <LandingBestSellerSectionComponent items={bestSellers} />
-      <LandingEssentialComponent />
+      <LandingEssentialComponent products={products?.payload} categories={categories?.payload}/>
 
       <section className="mx-auto w-full max-w-7xl py-16 lg:py-20">
         <div className="grid gap-4 md:grid-cols-3">
@@ -85,7 +87,7 @@ export default function Home() {
         <p>
           Explore{" "}
           <Link href="/categories" className="font-medium text-gray-900 underline-offset-2 hover:underline">
-            {categories.length} categories
+            {categories.payload.length} categories
           </Link>{" "}
           and{" "}
           <Link href="/orders" className="font-medium text-gray-900 underline-offset-2 hover:underline">

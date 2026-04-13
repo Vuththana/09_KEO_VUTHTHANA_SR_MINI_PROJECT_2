@@ -5,17 +5,16 @@ import { Button } from "@heroui/react";
 import {
   ESSENTIALS_TABS,
   filterProductsByEssentialsTab,
-  products,
 } from "../../data/mockData";
 import ProductCardComponent from "../ProductCardComponent";
 
 const PAGE_SIZE = 8;
 
-export default function LandingEssentialsGrid() {
-  const [tab, setTab] = useState("All");
+export default function LandingEssentialsGrid({products, categories}) {
+  const [tab, setTab] = useState(ESSENTIALS_TABS);
   const [showAll, setShowAll] = useState(false);
-
   const filtered = filterProductsByEssentialsTab(products, tab);
+  const allTabs = [ESSENTIALS_TABS, ...categories];
   const visible = showAll ? filtered : filtered.slice(0, PAGE_SIZE);
   const canLoadMore = !showAll && filtered.length > PAGE_SIZE;
 
@@ -35,15 +34,15 @@ export default function LandingEssentialsGrid() {
         role="tablist"
         aria-label="Product categories"
       >
-        {ESSENTIALS_TABS.map((label) => {
-          const on = tab === label;
+        {allTabs.map((cat) => {
+          const on = tab?.categoryId === cat.categoryId;
           return (
             <Button
-              key={label}
+              key={cat.categoryId}
               role="tab"
               aria-selected={on}
               onPress={() => {
-                setTab(label);
+                setTab(cat);
                 setShowAll(false);
               }}
               className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
@@ -52,7 +51,7 @@ export default function LandingEssentialsGrid() {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              {label}
+              {cat.name}
             </Button>
           );
         })}

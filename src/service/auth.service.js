@@ -1,3 +1,5 @@
+import { signOut } from "@/auth";
+
 export async function registerService(req) {
   const isStudent = req.role === "Student";
 
@@ -46,31 +48,15 @@ export async function loginService(req) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(user), 
+    body: JSON.stringify(user),
   });
   if (res.status === 401) {
     throw new Error("Invalid credentials")
   }
 
-  if(!res.ok) {
+  if (!res.ok) {
     return null;
   }
   const loggedUser = await res.json();
   return loggedUser;
-}
-
-export async function getGenerations() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/generations`, {
-    next: { revalidate: 3600 }
-  });
-  if (!res.ok) return [];
-  return res.json();
-}
-
-export async function getClassrooms() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/classrooms`, {
-    next: { revalidate: 3600 }
-  });
-  if (!res.ok) return [];
-  return res.json();
 }

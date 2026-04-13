@@ -21,5 +21,5 @@ export default async function proxy(req) {
 }
 
 export const config = {
-  matcher: ["/products/:path*", "/login", "/register"],
+  matcher: ["/","/products/:path*", "/login", "/register"],
 };

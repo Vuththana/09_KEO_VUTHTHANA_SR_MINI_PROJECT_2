@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn, signOut } from "@/auth";
-import { registerService } from "@/service/auth.service";
+import { logoutService, registerService } from "@/service/auth.service";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 /**
@@ -44,5 +44,5 @@ export async function registerAction(data) {
  * LOGOUT ACTION
  */
 export async function logOutAction() {
-    await signOut({ redirectTo: "/login" });
+    await signOut({redirectTo: "/login"})
 }

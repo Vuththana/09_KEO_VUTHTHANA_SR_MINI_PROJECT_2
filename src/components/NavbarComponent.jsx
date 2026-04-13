@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/react";
-import { User } from "lucide-react";
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import { logOutAction } from "@/action/auth.action";
+import useCart from "@/lib/cart";
 // import { useCart } from "@/store/cartStore";
 
 const centerLinks = [
@@ -13,6 +14,7 @@ const centerLinks = [
   { href: "/manage-products", label: "Manage Products" },
   { href: "/orders", label: "Orders" },
 ];
+
 
 function CartBagIcon({ className }) {
   return (
@@ -55,16 +57,20 @@ function authLinkClass(pathname, path, filled = false) {
     : "rounded-full px-4 py-2 text-sm font-medium text-gray-600 transition hover:text-gray-900 hover:ring-1 hover:ring-gray-200";
 }
 
-export default function NavbarComponent({ session }) {
+export default function NavbarComponent({ session, currentUser }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const {items} = useCart();
+
+  const quantityList = items.length != 0 ? items.flatMap((item) => item.quantity) : null;
 
   const token = session ? session?.user?.payload?.token : null;
-
-  //   const { totalQuantity } = useCart();
-
-  //   const cartLabel =
-  //     totalQuantity > 0 ? `Shopping cart, ${totalQuantity} items` : "Shopping cart";
+  const name = session ? currentUser?.payload?.firstName[0].concat(currentUser?.payload?.lastName[0]) : null;
+  
+  const totalQuantity = quantityList != null ? quantityList.length : 0;
+  
+    const cartLabel =
+      totalQuantity > 0 ? `Shopping cart, ${totalQuantity} items` : "Shopping cart";
 
   const linkClass = (active) =>
     `relative flex items-center rounded-full px-3 py-2 text-sm font-medium transition ${active ? "text-slate-900" : "text-slate-600 hover:text-slate-900"
@@ -104,18 +110,17 @@ export default function NavbarComponent({ session }) {
 
         <div className="z-10 flex items-center gap-2 sm:gap-3">
           {token ?
-            <Dropdown>
+            <Dropdown placement="bottom left">
               <DropdownTrigger className="rounded-full">
-                <button>
-                  <User />
+                <button className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition border-gray-200 text-gray-700 hover:border-lime-300 hover:bg-lime-50">
+                  {name}
                 </button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem id="dashboard" textValue="Dashboard">
-                  <p>Dashboard</p>
-                </DropdownItem>
-                <DropdownItem id="profile" textValue="Profile">
-                  <p>Profile</p>
+                <DropdownItem>
+                  <button onClick={() => logOutAction()}>
+                    Logout
+                  </button>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -132,22 +137,22 @@ export default function NavbarComponent({ session }) {
 
           <Link
             href="/cart"
-            // aria-label={cartLabel}
-            // title={cartLabel}
+            aria-label={cartLabel}
+            title={cartLabel}
             className={`relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${pathname === "/cart"
               ? "border-lime-500 bg-lime-400 text-gray-900"
               : "border-gray-200 text-gray-700 hover:border-lime-300 hover:bg-lime-50"
               }`}
           >
             <CartBagIcon className="size-5" />
-            {/* <span
+            <span
               className={`absolute -right-0.5 -top-0.5 flex min-h-4.5 min-w-4.5 items-center justify-center rounded-full bg-teal-900 px-1 text-[10px] font-semibold leading-none text-lime-300 tabular-nums transition-opacity ${
                 totalQuantity > 0 ? "opacity-100" : "pointer-events-none opacity-0"
               }`}
               aria-hidden
             >
               {totalQuantity > 99 ? "99+" : totalQuantity}
-            </span> */}
+            </span>
           </Link>
 
           <Button

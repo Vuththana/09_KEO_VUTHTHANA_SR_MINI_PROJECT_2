@@ -4,6 +4,7 @@ import ProductCardComponent from "../ProductCardComponent";
 
 
 export default function LandingBestSellerSectionComponent({ items }) {
+  console.log(items)
   return (
     <section className="mx-auto w-full max-w-7xl py-16 lg:py-20">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
