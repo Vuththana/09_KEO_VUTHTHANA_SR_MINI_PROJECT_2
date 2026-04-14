@@ -5,11 +5,26 @@ import Link from "next/link";
 import ButtonAddComponent from "./ButtonAddComponent";
 
 export function StarRow({ rating }) {
+  const hasRating = rating !== null && rating !== undefined;
+  const totalStars = 5;
+  const filledStars = hasRating ? Math.round(rating) : 0;
+
   return (
-    <p className="flex items-center gap-0.5 text-amber-400" aria-label={`${rating == null ? 0 : rating} stars`}>
-      <span className="text-sm">★★★★★</span>
-      <span className="ml-1 text-xs tabular-nums text-gray-500">{rating == null ? 0 : rating}</span>
-    </p>
+    <div className="flex items-center gap-2">
+      <div
+        className={`flex items-center gap-0.5 ${hasRating ? 'text-amber-400' : 'text-gray-300'}`}
+        aria-label={`${hasRating ? rating : 0} out of 5 stars`}
+      >
+        {[...Array(totalStars)].map((_, index) => (
+          <span key={index} className="text-2xl leading-none">
+            {index < filledStars ? '★' : '☆'}
+          </span>
+        ))}
+      </div>
+      <span className={`text-sm font-medium ${hasRating ? 'text-gray-600' : 'text-gray-400'}`}>
+        {hasRating ? `(${rating.toFixed(1)})` : '(-)'}
+      </span>
+    </div>
   );
 }
 
@@ -36,7 +51,7 @@ export default function ProductCardComponent({ product }) {
         </div>
       </Link>
       <div className="relative mt-4 pr-14">
-        <StarRow rating={star}/>
+        <StarRow rating={star} />
         <Link href={`/products/${productId}`}>
           <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900 hover:text-lime-700">
             {name}
