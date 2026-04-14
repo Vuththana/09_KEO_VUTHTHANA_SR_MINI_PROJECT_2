@@ -39,6 +39,7 @@ export default function LoginFormComponent() {
     }
 
     if (result) {
+      toast.success("Account logged in successfully!", { id: toastId })
       router.push("/");
       router.refresh();
     }

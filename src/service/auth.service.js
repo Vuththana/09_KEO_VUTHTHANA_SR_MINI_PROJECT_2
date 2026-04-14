@@ -1,22 +1,16 @@
-import { signOut } from "@/auth";
 
 export async function registerService(req) {
-  const isStudent = req.role === "Student";
 
   const newUser = {
-    fullName: req.fullName,
+    firstName: req.firstName,
+    lastName: req.lastName,
     email: req.email,
     password: req.password,
-    user_photo: req.user_photo,
-    confirmPassword: req.confirmPassword,
-    isStudent: isStudent,
-    genId: req.role === "Instructor" ? req.generation : null,
-
-    classId: isStudent ? req.class : null,
+    birthDate: req.birthDate
   };
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/auth/register`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/auths/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newUser),

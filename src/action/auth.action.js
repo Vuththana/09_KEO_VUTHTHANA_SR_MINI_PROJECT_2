@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn, signOut } from "@/auth";
-import { logoutService, registerService } from "@/service/auth.service";
+import { registerService } from "@/service/auth.service";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 /**
@@ -23,6 +23,7 @@ export async function loginAction(data) {
 /**
  * REGISTER ACTION
  */
+// action/auth.action.js
 export async function registerAction(data) {
     try {
         const res = await registerService(data);
@@ -30,19 +31,18 @@ export async function registerAction(data) {
         if (res?.error) {
             return { error: res.error };
         }
+        return { success: true };
 
     } catch (err) {
         if (isRedirectError(err)) throw err;
-
         console.error("Register Action Error:", err);
-        return { error: "An unexpected error occurred during registration." };
+        return { error: "An unexpected error occurred." };
     }
-    redirect("/login");
 }
 
 /**
  * LOGOUT ACTION
  */
 export async function logOutAction() {
-    await signOut({redirectTo: "/login"})
+    await signOut({ redirectTo: "/login" })
 }
