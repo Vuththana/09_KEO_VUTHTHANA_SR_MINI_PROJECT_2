@@ -8,11 +8,28 @@ import { Loader2, Minus, Plus } from 'lucide-react';
 import useCart from '@/lib/cart';
 import Link from "next/link";
 
+
 export function StarRow({ rating }) {
+    const hasRating = rating !== null && rating !== undefined;
+    const totalStars = 5;
+    const filledStars = hasRating ? Math.round(rating) : 0;
+
     return (
-        <p className="flex items-center gap-0.5 text-amber-400" aria-label={`${rating == null ? 0 : rating} stars`}>
-            <span className="text-4xl">★★★★★</span>
-        </p>
+        <div className="flex items-center gap-2">
+            <div
+                className={`flex items-center gap-0.5 ${hasRating ? 'text-amber-400' : 'text-gray-300'}`}
+                aria-label={`${hasRating ? rating : 0} out of 5 stars`}
+            >
+                {[...Array(totalStars)].map((_, index) => (
+                    <span key={index} className="text-2xl leading-none">
+                        {index < filledStars ? '★' : '☆'}
+                    </span>
+                ))}
+            </div>
+            <span className={`text-sm font-medium ${hasRating ? 'text-gray-600' : 'text-gray-400'}`}>
+                {hasRating ? `(${rating.toFixed(1)})` : '(-)'}
+            </span>
+        </div>
     );
 }
 
@@ -46,10 +63,11 @@ export default function ProductDetailPage() {
 
     useEffect(() => {
         if (product) {
-            if (product.colors?.length === 1) setSelectedColors([product.colors[0]]);
-            if (product.sizes?.length === 1) setSelectedSizes([product.sizes[0]]);
+            if (product.colors?.length >= 1) setSelectedColors([product.colors[0]]);
+            if (product.sizes?.length >= 1) setSelectedSizes([product.sizes[0]]);
         }
     }, [product]);
+
 
     const handleQuantityChange = (amount) => {
         setQuantity((prev) => Math.max(1, prev + amount));
@@ -119,9 +137,8 @@ export default function ProductDetailPage() {
                                 {product.colors.map((color) => {
                                     const isSelected = selectedColors.includes(color);
                                     return (
-                                        <div>
+                                        <div key={color}>
                                             <button
-                                                key={color}
                                                 onClick={() => toggleSelection(color, selectedColors, setSelectedColors)}
                                                 className={`rounded-xl border-2 px-5 py-2 text-sm font-bold transition-all ${isSelected ? "border-black bg-black text-white" : "border-gray-100 bg-white text-gray-600 hover:border-gray-300"
                                                     }`}
