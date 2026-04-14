@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { loginAction } from "@/action/auth.action";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email address."),
@@ -14,6 +16,7 @@ const loginSchema = z.object({
 
 export default function LoginFormComponent() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -27,23 +30,44 @@ export default function LoginFormComponent() {
     },
   });
 
-  const onSubmit = async (data) => {
-    const result = await loginAction(data)
+const onSubmit = async (data) => {
+  setIsLoading(true);
+
+  const loginPromise = loginAction(data);
+
+  toast.promise(loginPromise, {
+    loading: 'Signing into your account...',
+    success: (res) => {
+      if (res?.error) throw new Error(res.error);
+      
+      return "Account signed in! Redirecting...";
+    },
+    error: (err) => {
+      if (err.message === 'NEXT_REDIRECT') return null;
+      return err.message || "Login failed.";
+    },
+  });
+
+  try {
+    const result = await loginPromise;
 
     if (result?.error) {
       setError("root", {
         type: "manual",
         message: "Wrong email or password. Please try again."
       });
-      return;
-    }
-
-    if (result) {
-      toast.success("Account logged in successfully!", { id: toastId })
+    } else {
       router.push("/");
       router.refresh();
     }
-  };
+  } catch (err) {
+    if (err.message !== 'NEXT_REDIRECT') {
+      console.error("Login Error:", err);
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <form

@@ -12,7 +12,6 @@ export async function loginAction(data) {
         await signIn("credentials", {
             email: data.email,
             password: data.password,
-            redirectTo: "/",
         });
     } catch (err) {
         if (isRedirectError(err)) throw err;
