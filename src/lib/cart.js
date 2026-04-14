@@ -8,12 +8,12 @@ const useCart = create ((set) => ({
       return {
         items: state.items.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + product.quantity }
             : item
         ),
       };
     }
-    return { items: [...state.items, { ...product, quantity: 1 }] };
+    return { items: [...state.items, { ...product }] };
   }),
   updateQuantity: (id, quantity) => set((state) => ({
     items: state.items.map((item) =>

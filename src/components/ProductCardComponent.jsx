@@ -16,8 +16,6 @@ export function StarRow({ rating }) {
 export default function ProductCardComponent({ product }) {
   const { productId, name, price, imageUrl, star } = product;
 
-  console.log(star)
-
   return (
     <article className="group relative rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md">
       <Link href={`/products/${productId}`} className="block">
@@ -47,7 +45,7 @@ export default function ProductCardComponent({ product }) {
         <p className="mt-2 text-base font-semibold tabular-nums text-gray-900">${price}</p>
       </div>
       <div className="absolute bottom-4 right-4">
-        <ButtonAddComponent productId={productId} />
+        <ButtonAddComponent product={product} />
       </div>
     </article>
   );
